@@ -31,6 +31,8 @@ extern const AP_HAL::HAL& hal;
 #define PX4FLOW_BASE_I2C_ADDR   0x42
 #define PX4FLOW_INIT_RETRIES    10      // attempt to initialise the sensor up to 10 times at startup
 
+std::atomic<uint16_t> AP_OpticalFlow_PX4Flow::ground_distance;
+
 // constructor
 AP_OpticalFlow_PX4Flow::AP_OpticalFlow_PX4Flow(OpticalFlow &_frontend) :
     OpticalFlow_backend(_frontend)
@@ -131,6 +133,8 @@ void AP_OpticalFlow_PX4Flow::timer(void)
         
         _applyYaw(state.flowRate);
         _applyYaw(state.bodyRate);
+
+        ground_distance.store(frame.ground_distance, std::memory_order_relaxed);
     }
 
     _update_frontend(state);
