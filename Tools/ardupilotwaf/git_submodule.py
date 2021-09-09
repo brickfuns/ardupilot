@@ -71,7 +71,8 @@ class update_submodule(Task.Task):
 
     def runnable_status(self):
         e = self.env.get_flat
-        cmd = e('GIT'), 'submodule', 'status', '--recursive', '--', e('SUBMODULE_PATH')
+        #cmd = e('GIT'), 'submodule', 'status', '--recursive', '--', e('SUBMODULE_PATH')
+        cmd = e('GIT'), 'submodule', 'status', '--recursive'
         out = self.generator.bld.cmd_and_log(cmd, quiet=Context.BOTH, cwd=self.cwd)
 
         self.non_fast_forward = []

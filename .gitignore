@@ -99,7 +99,6 @@ GTAGS
 config.mk
 *.apj
 .gdbinit
-/.vscode
 Parameters.html
 Parameters.md
 Parameters.rst
