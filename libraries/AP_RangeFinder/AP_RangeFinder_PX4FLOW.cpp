@@ -26,7 +26,7 @@ extern const AP_HAL::HAL& hal;
    already know that we should setup the rangefinder
 */
 AP_RangeFinder_PX4FLOW::AP_RangeFinder_PX4FLOW(RangeFinder::RangeFinder_State &_state, AP_RangeFinder_Params &_params,uint8_t instance) :
-    AP_RangeFinder_Backend(_state, params)
+    AP_RangeFinder_Backend(_state, _params)
     // AP_RangeFinder_Backend(_ranger, instance, _state)
 {
 }
@@ -41,6 +41,9 @@ bool AP_RangeFinder_PX4FLOW::detect(uint8_t instance)
 */
 void AP_RangeFinder_PX4FLOW::update(void)
 {
-    state.distance_cm = static_cast<float>(AP_OpticalFlow_PX4Flow::ground_distance.load(std::memory_order_relaxed)) * 0.1f;
+    state.distance_cm = (uint16_t)((float)AP_OpticalFlow_PX4Flow::ground_distance.load(std::memory_order_relaxed)*0.1f);
     update_status();
+    // gcs().send_text(MAV_SEVERITY_CRITICAL, 
+    //              "AP_RangeFinder_PX4FLOW distance: %hu", 
+    //              state.distance_cm);
 }

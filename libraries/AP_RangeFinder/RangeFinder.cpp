@@ -269,6 +269,7 @@ void RangeFinder::init(enum Rotation orientation_default)
     for (uint8_t i=0, serial_instance = 0; i<RANGEFINDER_MAX_INSTANCES; i++) {
         // serial_instance will be increased inside detect_instance
         // if a serial driver is loaded for this instance
+        
         detect_instance(i, serial_instance);
         if (drivers[i] != nullptr) {
             // we loaded a driver for this instance, so it must be
@@ -496,6 +497,7 @@ void RangeFinder::detect_instance(uint8_t instance, uint8_t& serial_instance)
 
     case RangeFinder_TYPE_PX4FLOW:
         if (AP_RangeFinder_PX4FLOW::detect(serial_instance)) {
+            // gcs().send_text(MAV_SEVERITY_CRITICAL, "RNGFND PX4FLOW INIT id%d, type:%d ori:%d", instance, params[instance].type , params[instance].orientation);
             drivers[instance] = new AP_RangeFinder_PX4FLOW(state[instance], params[instance], serial_instance);
         }
         break;
@@ -573,10 +575,23 @@ AP_RangeFinder_Backend *RangeFinder::find_instance(enum Rotation orientation) co
 
 uint16_t RangeFinder::distance_cm_orient(enum Rotation orientation) const
 {
+    // for (uint8_t i=0; i<RANGEFINDER_MAX_INSTANCES; i++) {
+    //     AP_RangeFinder_Backend *backend = drivers[i];
+    //     if (backend != nullptr ){
+    //         gcs().send_text(MAV_SEVERITY_CRITICAL, 
+    //             "RangeFinder1 id:%d, %hu, status:%hu, %d", i,
+    //             (uint16_t)backend->orientation(), (uint16_t)(backend->status()));
+    //     }
+    // }
+
     AP_RangeFinder_Backend *backend = find_instance(orientation);
     if (backend == nullptr) {
         return 0;
     }
+
+    // gcs().send_text(MAV_SEVERITY_CRITICAL, 
+    //             "RangeFinder distance_cm_orient distance: %hu", 
+    //             backend->distance_cm());
     return backend->distance_cm();
 }
 
