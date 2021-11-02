@@ -7,6 +7,7 @@
 #include "AP_OpticalFlow_CXOF.h"
 #include "AP_OpticalFlow_MAV.h"
 #include "AP_OpticalFlow_HereFlow.h"
+#include "AP_OpticalFlow_UPFLOW.h"
 #include <AP_Logger/AP_Logger.h>
 
 extern const AP_HAL::HAL& hal;
@@ -25,7 +26,7 @@ const AP_Param::GroupInfo OpticalFlow::var_info[] = {
     // @Param: _TYPE
     // @DisplayName: Optical flow sensor type
     // @Description: Optical flow sensor type
-    // @Values: 0:None, 1:PX4Flow, 2:Pixart, 3:Bebop, 4:CXOF, 5:MAVLink, 6:UAVCAN
+    // @Values: 0:None, 1:PX4Flow, 2:Pixart, 3:Bebop, 4:CXOF, 5:MAVLink, 6:UAVCAN,7:MSP, 8:UPFLOW
     // @User: Standard
     // @RebootRequired: True
     AP_GROUPINFO("_TYPE", 0,  OpticalFlow,    _type,   (int8_t)OPTICAL_FLOW_TYPE_DEFAULT),
@@ -137,6 +138,9 @@ void OpticalFlow::init(uint32_t log_bit)
 #if HAL_WITH_UAVCAN
         backend = new AP_OpticalFlow_HereFlow(*this);
 #endif
+        break;
+    case OpticalFlowType::UPFLOW:
+        backend = AP_OpticalFlow_UPFLOW::detect(*this);
         break;
     case OpticalFlowType::SITL:
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
